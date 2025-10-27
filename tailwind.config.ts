@@ -8,6 +8,13 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    "bg-green-100", "text-green-700", "dark:bg-green-800", "dark:text-green-200",
+    "bg-yellow-100", "text-yellow-700", "dark:bg-yellow-800", "dark:text-yellow-200",
+    "bg-blue-100", "text-blue-700", "dark:bg-blue-800", "dark:text-blue-200",
+    "bg-red-100", "text-red-700", "dark:bg-red-800", "dark:text-red-200",
+    "bg-gray-100", "text-gray-700", "dark:bg-gray-800", "dark:text-gray-200",
+  ],
   darkMode: "class",
   theme: {
     fontFamily: {

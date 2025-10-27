@@ -69,7 +69,7 @@ const SignIn: React.FC = () => {
         document.cookie = `access_token=${access_token}; expires=${expirationDate.toUTCString()}; path=/;`;
 
         document.cookie = `nama_depan=${encodeURIComponent(nama_depan)}; expires=${expirationDate.toUTCString()}; path=/;`;
-        router.push("/pegawai");
+        router.push("/produk");
       } else if (response.status === 200 && response.data.status === 401) {
   
         Swal.fire({

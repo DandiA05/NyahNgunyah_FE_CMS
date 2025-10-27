@@ -168,6 +168,30 @@ const TableTransaksi = () => {
       {/* Table */}
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         {/* header dan body tetap sama */}
+          {/* Header */}
+        <div className="grid grid-cols-12 border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
+          <div className="col-span-2 hidden items-center sm:flex">
+            <p className="font-medium">Nomor Transaksi</p>
+          </div>
+          <div className="col-span-2 flex items-center">
+            <p className="font-medium">Tanggal Transaksi</p>
+          </div>
+          <div className="col-span-3 flex items-center">
+            <p className="font-medium">Nama Pembeli</p>
+          </div>
+          <div className="col-span-2 flex items-center justify-center">
+            <p className="font-medium">Status</p>
+          </div>
+          <div className="col-span-2 flex items-center justify-end">
+            <p className="font-medium">Total Harga</p>
+          </div>
+          <div className="col-span-1 flex items-center justify-center">
+            <p className="font-medium">Action</p>
+          </div>
+        </div>
+
+
+
         {transaksiList.length === 0 ? (
           <div className="py-4 text-center text-sm text-black dark:text-white">
             Data transaksi tidak ada
