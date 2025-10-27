@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <DefaultLayout>
-        <Home />
+        <h1>Home</h1>
       </DefaultLayout>
     </>
   );
