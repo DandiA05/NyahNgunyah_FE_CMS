@@ -30,7 +30,7 @@ const DetailTransaksiElements = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const router = useRouter()
+  const router = useRouter();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [dataTransaksi, setDataTransaksi] = useState<any>(null);
@@ -78,13 +78,13 @@ const DetailTransaksiElements = () => {
       setLoading(true);
       await updateStatusTransaksi(Number(dataTransaksi.id), status);
 
-     const pesanMap: Record<string, string> = {
-      pending: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda sedang *menunggu konfirmasi*. Mohon ditunggu ya`,
-      process: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda saat ini sedang *diproses*. Kami akan segera mengirimkan update berikutnya`,
-      deliver: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda sedang *dikirim*. Mohon pastikan nomor penerima aktif untuk menerima paket`,
-      cancelled: `Halo ${dataTransaksi.nama_pembeli}, mohon maaf, pesanan Anda *dibatalkan*. Silakan hubungi kami jika ada pertanyaan`,
-      completed: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda telah *selesai*. Terima kasih sudah berbelanja di toko kami!`,
-    };
+      const pesanMap: Record<string, string> = {
+        pending: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda sedang *menunggu konfirmasi*. Mohon ditunggu ya`,
+        process: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda saat ini sedang *diproses*. Kami akan segera mengirimkan update berikutnya`,
+        deliver: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda sedang *dikirim*. Mohon pastikan nomor penerima aktif untuk menerima paket`,
+        cancelled: `Halo ${dataTransaksi.nama_pembeli}, mohon maaf, pesanan Anda *dibatalkan*. Silakan hubungi kami jika ada pertanyaan`,
+        completed: `Halo ${dataTransaksi.nama_pembeli}, pesanan Anda telah *selesai*. Terima kasih sudah berbelanja di toko kami!`,
+      };
 
       const encodeForWa = (text: string) => {
         // encode tapi biarkan emoji dan tanda * _ ~ tetap terbaca
@@ -116,13 +116,13 @@ const DetailTransaksiElements = () => {
         confirmButtonText: "OK",
         cancelButtonText: "Kirim WhatsApp",
         reverseButtons: true,
-        cancelButtonColor: "#25D366", 
+        cancelButtonColor: "#25D366",
       }).then((result) => {
         if (result.dismiss === Swal.DismissReason.cancel && waLink) {
           window.open(waLink, "_blank");
         }
-        if(result.isConfirmed){
-         router.back()
+        if (result.isConfirmed) {
+          router.back();
         }
       });
 
@@ -141,7 +141,10 @@ const DetailTransaksiElements = () => {
 
   return (
     <>
-      <Breadcrumb pageName="Detail Transaksi" paths={[{  name: "Data Transaksi", href: "/transaksi" }]} />
+      <Breadcrumb
+        pageName="Detail Transaksi"
+        paths={[{ name: "Data Transaksi", href: "/transaksi" }]}
+      />
 
       {/* Wrapper utama */}
       <div className="grid grid-cols-1 gap-9">
@@ -156,11 +159,12 @@ const DetailTransaksiElements = () => {
               </label>
               <span
                 className={`text-md rounded-full px-3 py-1 font-semibold ${getStatusColor(
-                  dataTransaksi?.status ?? "Unknown",
+                  (dataTransaksi?.status ?? "unknown").toLowerCase(),
                 )}`}
               >
                 {getStatusLabel(dataTransaksi?.status ?? "unknown")}
               </span>
+
             </div>
 
             {/* 🔵 Update Status di kanan */}
@@ -312,10 +316,9 @@ const DetailTransaksiElements = () => {
             <div className="grid grid-cols-5 border-t border-gray-200 px-6 py-3 text-gray-800 dark:border-gray-700 dark:text-gray-100">
               <div className="col-span-3 text-left font-semibold">Total</div>
               <div className="col-span-1 text-center font-semibold">
-                {produkList.map((produk) => produk.quantity).reduce(
-                  (a, b) => a + b,
-                  0,
-                )}
+                {produkList
+                  .map((produk) => produk.quantity)
+                  .reduce((a, b) => a + b, 0)}
               </div>
               <div className="col-span-1 text-center font-semibold">
                 {formatHarga(Number(dataTransaksi?.total_harga))}
