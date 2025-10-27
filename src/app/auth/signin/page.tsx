@@ -6,7 +6,7 @@ import * as z from "zod";
 import { useEffect, useState } from "react";
 import { fetchPegawai, Pegawai } from "@/app/api/pegawai";
 import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css"; // 
+import "flatpickr/dist/flatpickr.min.css"; //
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,7 @@ const SignIn: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(validationSchema),
   });
-  const [successMessage, setSuccessMessage] = useState(false); 
+  const [successMessage, setSuccessMessage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -46,21 +46,23 @@ const SignIn: React.FC = () => {
     setLoading(true);
     setError("");
 
-    console.log("Data yang dikirimkan:", data); 
+    console.log("Data yang dikirimkan:", data);
 
     try {
-      const response = await axios.post(`${apiUrl}/auth/login`, {
-        email: data.email,
-        password: data.password,
-      },
-      {
-    withCredentials: true, // penting untuk CORS + cookie
-    headers: {
-      'Content-Type': 'application/json', // optional, tapi bagus ditentukan
-    },
-  });
+      const response = await axios.post(
+        `${apiUrl}/auth/login`,
+        {
+          email: data.email,
+          password: data.password,
+        },
+        {
+          withCredentials: true, // penting untuk CORS + cookie
+          headers: {
+            "Content-Type": "application/json", // optional, tapi bagus ditentukan
+          },
+        },
+      );
 
- 
       if (
         response.status === 200 &&
         response.data &&
@@ -68,7 +70,7 @@ const SignIn: React.FC = () => {
       ) {
         const { access_token } = response.data;
         const { nama_depan } = response.data.payload;
-       
+
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 7);
 
@@ -77,7 +79,6 @@ const SignIn: React.FC = () => {
         document.cookie = `nama_depan=${encodeURIComponent(nama_depan)}; expires=${expirationDate.toUTCString()}; path=/;`;
         router.push("/produk");
       } else if (response.status === 200 && response.data.status === 401) {
-  
         Swal.fire({
           title: "Error",
           text: "Email atau password tidak benar.",
@@ -87,7 +88,7 @@ const SignIn: React.FC = () => {
       }
     } catch (err: any) {
       setError("Failed to login");
-      console.error("Error:", err.message || err); 
+      console.error("Error:", err.message || err);
       Swal.fire({
         title: "Error",
         text: err.message || "Terjadi kesalahan saat login.",
