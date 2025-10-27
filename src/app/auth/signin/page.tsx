@@ -52,7 +52,13 @@ const SignIn: React.FC = () => {
       const response = await axios.post(`${apiUrl}/auth/login`, {
         email: data.email,
         password: data.password,
-      });
+      },
+      {
+    withCredentials: true, // penting untuk CORS + cookie
+    headers: {
+      'Content-Type': 'application/json', // optional, tapi bagus ditentukan
+    },
+  });
 
  
       if (
