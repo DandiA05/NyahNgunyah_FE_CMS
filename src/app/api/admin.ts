@@ -15,9 +15,7 @@ export const fetchAdmin = async (): Promise<AdminType[]> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
-    const response = await axios.get(`${apiUrl}/user`, {
-       withCredentials: true,
-    });
+    const response = await axios.get(`${apiUrl}/user`);
 
     if (response.status !== 200) {
       throw new Error("Failed to fetch admin data");
@@ -33,9 +31,7 @@ export const fetchAdmin = async (): Promise<AdminType[]> => {
 export const fetchPegawaiById = async (id: number): Promise<AdminType[]> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   try {
-    const response = await axios.get(`${apiUrl}/pegawai/${id}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(`${apiUrl}/pegawai/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Failed to fetch pegawai data");
@@ -58,9 +54,7 @@ export const addAdmin = async (adminData: {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
-    const response = await axios.post(`${apiUrl}/user`, adminData , {
-      withCredentials: true,
-    });
+    const response = await axios.post(`${apiUrl}/user`, adminData);
 
     if (response.status !== 201) {
       throw new Error("Failed to add admin data");
@@ -86,9 +80,7 @@ export const editAdmin = async (
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
-    const response = await axios.put(`${apiUrl}/user/${id}`, pegawaiData, {
-      withCredentials: true,
-    });
+    const response = await axios.put(`${apiUrl}/user/${id}`, pegawaiData);
 
     if (response.status !== 200) {
       throw new Error("Failed to edit pegawai");
@@ -103,9 +95,7 @@ export const editAdmin = async (
 export const fetchAdminById = async (id: number): Promise<AdminType[]> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   try {
-    const response = await axios.get(`${apiUrl}/user/${id}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(`${apiUrl}/user/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Failed to fetch user data");
@@ -121,9 +111,7 @@ export const deleteAdmin = async (id: number): Promise<void> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
-    const response = await axios.delete(`${apiUrl}/user/${id}`, {
-      withCredentials: true,
-    });
+    const response = await axios.delete(`${apiUrl}/user/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Failed to delete user data");

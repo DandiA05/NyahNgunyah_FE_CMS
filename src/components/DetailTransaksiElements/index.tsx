@@ -37,6 +37,7 @@ const DetailTransaksiElements = () => {
   const [produkList, setProdukList] = useState<any[]>([]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [status, setStatus] = useState("");
+  const [initialStatus, setInitialStatus] = useState("");
 
   useEffect(() => {
     flatpickr(".form-datepicker", { dateFormat: "m/d/Y" });
@@ -53,6 +54,7 @@ const DetailTransaksiElements = () => {
       setDataTransaksi(data);
       setProdukList(data.details);
       setStatus(data.status || "");
+      setInitialStatus(data.status || "");
     } catch (err: any) {
       Swal.fire(
         "Gagal!",
@@ -159,43 +161,49 @@ const DetailTransaksiElements = () => {
               </label>
               <span
                 className={`text-md rounded-full px-3 py-1 font-semibold ${getStatusColor(
-                  (dataTransaksi?.status ?? "unknown").toLowerCase(),
+                  dataTransaksi?.status ?? "Unknown",
                 )}`}
               >
                 {getStatusLabel(dataTransaksi?.status ?? "unknown")}
               </span>
-
             </div>
 
             {/* 🔵 Update Status di kanan */}
-            <div className="flex flex-col">
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Update Status Transaksi
-              </label>
-              <div className="flex items-center gap-3">
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
-                >
-                  <option value="">Pilih status...</option>
-                  <option value="pending">Menunggu Konfirmasi</option>
-                  <option value="process">Sedang Diproses</option>
-                  <option value="deliver">Sedang Dikirim</option>
-                  <option value="cancelled">Dibatalkan</option>
-                  <option value="completed">Selesai</option>
-                </select>
+            {initialStatus !== "cancelled" && (
+              <div className="flex flex-col">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Update Status Transaksi
+                </label>
+                <div className="flex items-center gap-3">
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">Pilih status...</option>
+                    <option value="pending">Menunggu Konfirmasi</option>
+                    <option value="process">Sedang Diproses</option>
+                    <option value="deliver">Sedang Dikirim</option>
+                    <option value="cancelled">Dibatalkan</option>
+                    <option value="completed">Selesai</option>
+                  </select>
 
-                <button
-                  type="button"
-                  onClick={handleUpdateStatus}
-                  disabled={loading}
-                  className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50"
-                >
-                  {loading ? "Menyimpan..." : "Update Status"}
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateStatus}
+                    disabled={loading}
+                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50"
+                  >
+                    {loading ? "Menyimpan..." : "Update Status"}
+                  </button>
+                </div>
+                {status === "cancelled" && (
+                  <p className="mt-2 text-xs text-red-500">
+                    Transaksi yang sudah dibatalkan tidak dapat diubah.
+                  </p>
+                )}
               </div>
-            </div>
+            )}
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">

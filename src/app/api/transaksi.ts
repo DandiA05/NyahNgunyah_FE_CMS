@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Pegawai } from "./pegawai";
 
 export type Produk = {
   id: number;
@@ -57,30 +58,23 @@ export const fetchTransaksi = async ({
     if (startDate) params.append("startDate", startDate);
     if (endDate) params.append("endDate", endDate);
 
-    const response = await axios.get(
-      `${apiUrl}/transaksi?${params.toString()}`,
-    );
+    const response = await axios.get(`${apiUrl}/transaksi?${params.toString()}`);
 
     if (response.status !== 200) {
       throw new Error("Failed to fetch transaksi data");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData));
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong");
   }
 };
 
+
 export async function updateStatusTransaksi(id: number, status: string) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const response = await axios.patch(`${apiUrl}/transaksi/${id}/status`, {
-    status,
-  });
-  const rawData = response.data;
-  const cleanData = JSON.parse(JSON.stringify(rawData));
-  return cleanData;
+   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const response = await axios.patch(`${apiUrl}/transaksi/${id}/status`, { status });
+  return response.data;
 }
 export const fetchTransaksiById = async (id: number): Promise<Transaksi[]> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -91,9 +85,7 @@ export const fetchTransaksiById = async (id: number): Promise<Transaksi[]> => {
       throw new Error("Failed to fetch transaksi data");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData));
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong");
   }
@@ -127,9 +119,7 @@ export const addProduk = async (produkData: {
       throw new Error("Failed to add produk");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData));
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Error adding produk");
   }
@@ -170,9 +160,7 @@ export const editProduk = async (
       throw new Error("Failed to edit produk");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData));
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Error editing produk");
   }

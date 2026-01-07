@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Pegawai } from "./pegawai";
 
 export type Produk = {
   id: number;
@@ -20,9 +21,7 @@ export const fetchProduk = async (): Promise<Produk[]> => {
     }
 
     console.log(response.data.data);
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData)); 
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong");
   }
@@ -37,9 +36,7 @@ export const fetchProdukById = async (id: number): Promise<Produk[]> => {
       throw new Error("Failed to fetch produk data");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData)); 
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong");
   }
@@ -81,9 +78,7 @@ export const addProduk = async (produkData: {
       throw new Error("Failed to add produk");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData)); 
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Error adding produk");
   }
@@ -132,9 +127,7 @@ export const editProduk = async (
       throw new Error("Failed to edit produk");
     }
 
-    const rawData = response.data;
-    const cleanData = JSON.parse(JSON.stringify(rawData)); 
-    return cleanData;
+    return response.data;
   } catch (error: any) {
     throw new Error(error.message || "Error editing produk");
   }

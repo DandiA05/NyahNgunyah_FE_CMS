@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import ImageUploader from "../ImageUploader";
 
 const validationSchema = z.object({
-  stock: z.number().min(1, { message: "Stock is required" }),
+  stock: z.string().min(1, { message: "Stock is required" }),
   namaProduk: z.string().min(1, { message: "Nama Produk is required" }),
   harga: z.string().min(1, { message: "Harga is required" }),
 });
@@ -142,8 +142,10 @@ const EditProdukElements = () => {
   };
   return (
     <>
-
-       <Breadcrumb pageName="Edit Data Produk" paths={[{  name: "Data Produk", href: "/produk" }]} />
+      <Breadcrumb
+        pageName="Edit Data Produk"
+        paths={[{ name: "Data Produk", href: "/produk" }]}
+      />
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
@@ -156,7 +158,7 @@ const EditProdukElements = () => {
                     Nama Produk
                   </label>
                   <input
-                    type="text" 
+                    type="text"
                     placeholder="Nama Produk"
                     {...register("namaProduk")}
                     className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -226,12 +228,10 @@ const EditProdukElements = () => {
                       console.log("deletedIds", deletedIds); // [1,2]
                       setExistingFiles((prev) => {
                         if (!deletedIds || deletedIds.length === 0) return prev;
-                        return prev.filter(
-                          (id) => !deletedIds.includes(id),
-                        );
+                        return prev.filter((id) => !deletedIds.includes(id));
                       });
 
-                      console.log('files', files);
+                      console.log("files", files);
 
                       setSelectedFiles((prev) => {
                         const combined = [...prev];

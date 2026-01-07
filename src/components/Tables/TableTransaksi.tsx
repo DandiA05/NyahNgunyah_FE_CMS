@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { fetchTransaksi, Transaksi } from "../../app/api/transaksi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+
 import Link from "next/link";
 import moment from "moment";
 import { formatHarga, getStatusColor, getStatusLabel } from "@/helper";
@@ -14,6 +15,7 @@ const TableTransaksi = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // state untuk filter
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<any>("pending");
   const [startDate, setStartDate] = useState(
@@ -23,32 +25,39 @@ const TableTransaksi = () => {
     moment().endOf("month").format("YYYY-MM-DD"),
   );
 
+  const getTransaksiData = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchTransaksi({
+        search,
+        status,
+        startDate,
+        endDate,
+      });
+      setTransaksiList(data);
+    } catch (err: any) {
+      setTransaksiList([]);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchTransaksi({
-          search,
-          status,
-          startDate,
-          endDate,
-        });
-        setTransaksiList(data);
-      } catch (err: any) {
-        setTransaksiList([]);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [search, status, startDate, endDate]);
+    getTransaksiData();
+  }, []);
+
+  // fungsi filter
+  const handleFilter = () => {
+    getTransaksiData();
+  };
 
   const handleReset = () => {
     setSearch("");
     setStatus("");
     setStartDate("");
     setEndDate("");
+    getTransaksiData();
   };
 
   if (loading) return <p>Loading...</p>;
@@ -70,7 +79,6 @@ const TableTransaksi = () => {
             className="rounded-md border border-gray-300 p-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-boxdark dark:text-white"
           />
         </div>
-
         {/* Status */}
         <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -97,9 +105,10 @@ const TableTransaksi = () => {
           </label>
           <DatePicker
             selected={startDate ? new Date(startDate) : null}
-            onChange={(date: Date | null) =>
-              setStartDate(date ? format(date, "yyyy-MM-dd") : "")
-            }
+            onChange={(date: Date | null) => {
+              if (date) setStartDate(format(date, "yyyy-MM-dd"));
+              else setStartDate("");
+            }}
             dateFormat="dd-MM-yyyy"
             className="rounded-md border border-gray-300 p-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-boxdark dark:text-white"
             placeholderText="Pilih tanggal mulai"
@@ -113,9 +122,10 @@ const TableTransaksi = () => {
           </label>
           <DatePicker
             selected={endDate ? new Date(endDate) : null}
-            onChange={(date: Date | null) =>
-              setEndDate(date ? format(date, "yyyy-MM-dd") : "")
-            }
+            onChange={(date: Date | null) => {
+              if (date) setEndDate(format(date, "yyyy-MM-dd"));
+              else setEndDate("");
+            }}
             dateFormat="dd-MM-yyyy"
             className="rounded-md border border-gray-300 p-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-boxdark dark:text-white"
             placeholderText="Pilih tanggal akhir"
@@ -124,6 +134,12 @@ const TableTransaksi = () => {
 
         {/* Buttons */}
         <div className="flex gap-2">
+          <button
+            onClick={handleFilter}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          >
+            Filter
+          </button>
           <button
             onClick={handleReset}
             className="rounded-md bg-gray-300 px-4 py-2 text-sm text-gray-800 hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
@@ -142,7 +158,7 @@ const TableTransaksi = () => {
               Total Transaksi (berdasarkan filter)
             </p>
             <p className="text-xl font-semibold text-gray-900 dark:text-white">
-              {transaksiList.length}
+              {transaksiList.length} 
             </p>
           </div>
         </div>
@@ -165,10 +181,9 @@ const TableTransaksi = () => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* 🧾 Table */}
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        {/* header dan body tetap sama */}
-          {/* Header */}
+        {/* Header */}
         <div className="grid grid-cols-12 border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
           <div className="col-span-2 hidden items-center sm:flex">
             <p className="font-medium">Nomor Transaksi</p>
@@ -190,8 +205,7 @@ const TableTransaksi = () => {
           </div>
         </div>
 
-
-
+        {/* Body */}
         {transaksiList.length === 0 ? (
           <div className="py-4 text-center text-sm text-black dark:text-white">
             Data transaksi tidak ada
@@ -207,31 +221,33 @@ const TableTransaksi = () => {
                   {transaksi.nomor_transaksi}
                 </span>
               </div>
+
               <div className="col-span-2 flex items-center">
                 <span className="text-sm text-black dark:text-white">
                   {moment(transaksi.tanggal).format("DD MMMM YYYY, HH:mm")}
                 </span>
               </div>
+
               <div className="col-span-3 flex items-center">
                 <span className="text-sm text-black dark:text-white">
                   {transaksi.nama_pembeli}
                 </span>
               </div>
+
               <div className="col-span-2 flex items-center justify-center">
                 <span
-                  className={`rounded-full px-3 py-1 text-center text-xs font-semibold  ${getStatusColor(transaksi?.status ?? "Unknown")}`}
+                  className={`rounded-full px-3 py-1 text-center text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200`}
                 >
-                  {getStatusLabel(transaksi?.status ?? "unknown")}
+                  {getStatusLabel(transaksi.status ?? "unknown")}
                 </span>
-
-              
-                
               </div>
+
               <div className="col-span-2 flex items-center justify-end">
                 <span className="text-sm text-black dark:text-white">
                   {formatHarga(Number(transaksi.total_harga))}
                 </span>
               </div>
+
               <div className="col-span-1 flex items-center justify-center">
                 <Link
                   href={`/transaksi/detail-transaksi/${transaksi.id}`}
