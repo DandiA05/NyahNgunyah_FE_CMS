@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
 interface SelectGroupTwoProps {
-  selectedOption: string;
-  onChange: (value: string) => void;
+  selectedOption?: string;
+  onChange?: (value: string) => void;
 }
 
 const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
-  selectedOption,
+  selectedOption = "",
   onChange,
 }) => {
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
         <select
           value={selectedOption}
           onChange={(e) => {
-            onChange(e.target.value); // Memanggil fungsi onChange dari parent
+            onChange?.(e.target.value); // Memanggil fungsi onChange dari parent jika ada
             changeTextColor();
           }}
           className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-3 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${

@@ -60,7 +60,7 @@ const options: ApexOptions = {
     fontSize: "14px",
 
     markers: {
-      radius: 99,
+      // radius is not supported in the type definition, legend markers are circular by default
     },
   },
   fill: {
