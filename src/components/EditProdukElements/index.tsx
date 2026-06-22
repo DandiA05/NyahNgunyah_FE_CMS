@@ -45,8 +45,7 @@ const EditProdukElements = () => {
   const { id } = useParams();
   const [dataProduk, setDataProduk] = useState<any>(null);
 
-  const [newUploads, setNewUploads] = useState<{ url: string; publicId: string }[]>([]);
-  const [existingFiles, setExistingFiles] = useState<number[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<any[]>([]);
 
   useEffect(() => {
     flatpickr(".form-datepicker", {
@@ -61,11 +60,24 @@ const EditProdukElements = () => {
       setValue("foto", dataProduk.foto);
       setValue("stock", Number(dataProduk.stock));
       setValue("descProduk", dataProduk.desc);
-      setExistingFiles(
-        dataProduk.fotos && dataProduk.fotos.length > 0
-          ? dataProduk.fotos.map((file: any) => file.id)
-          : [],
-      );
+      
+      const initialImages: any[] = [];
+      if (dataProduk.foto) {
+        initialImages.push({
+          url: dataProduk.foto,
+          publicId: dataProduk.foto_public_id,
+        });
+      }
+      if (dataProduk.fotos && dataProduk.fotos.length > 0) {
+        dataProduk.fotos.forEach((f: any) => {
+          initialImages.push({
+            id: f.id,
+            url: f.foto,
+            publicId: f.public_id,
+          });
+        });
+      }
+      setUploadedImages(initialImages);
     }
   }, [dataProduk, setValue]);
 
@@ -86,13 +98,32 @@ const EditProdukElements = () => {
 
     if (confirmation.isConfirmed) {
       try {
+        if (uploadedImages.length === 0) {
+          Swal.fire({
+            title: "Error",
+            text: "Foto produk wajib diupload.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          setLoading(false);
+          return;
+        }
+
+        const mainImage = uploadedImages[0];
+        const extraImages = uploadedImages.slice(1).map((img) => ({
+          id: img.id, // retained DB id
+          foto: img.url,
+          public_id: img.publicId || "",
+        }));
+
         const result = await editProduk(Number(id), {
           nama: String(data.namaProduk),
           stock: Number(data.stock),
           harga: String(data.harga),
-          fotos: newUploads, // Send array of new Cloudinary image objects
           desc: getValues().descProduk,
-          existingFileIds: existingFiles,
+          foto: mainImage.url,
+          foto_public_id: mainImage.publicId || "",
+          fotos: extraImages,
         });
 
         console.log("result", result);
@@ -104,8 +135,7 @@ const EditProdukElements = () => {
           confirmButtonText: "OK",
         }).then(() => {
           reset();
-          setNewUploads([]);
-          setExistingFiles([]);
+          setUploadedImages([]);
           router.push("/produk");
         });
       } catch (err: any) {
@@ -223,10 +253,9 @@ const EditProdukElements = () => {
                     Gambar Produk
                   </label>
                   <ImageUploader
-                    defaultImages={dataProduk?.fotos}
-                    onUploadsChange={(newUploads, remainingDbIds) => {
-                      setNewUploads(newUploads);
-                      setExistingFiles(remainingDbIds);
+                    defaultImages={uploadedImages}
+                    onImagesChange={(images) => {
+                      setUploadedImages(images);
                     }}
                   />
                   {errors.foto && (

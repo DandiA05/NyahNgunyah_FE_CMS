@@ -3,6 +3,7 @@ import Script from "next/script";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { deleteCloudinaryAsset } from "@/app/api/cloudinary";
 
 declare global {
@@ -11,61 +12,32 @@ declare global {
   }
 }
 
-interface DefaultImage {
-  id: number;
-  foto: string; // URL
+export interface CloudinaryImage {
+  id?: number; // DB ID if existing
+  url: string;
   publicId?: string; // Cloudinary publicId
 }
 
 interface ImageUploaderProps {
-  onUploadsChange: (
-    newUploads: { url: string; publicId: string }[],
-    remainingDbIds: number[]
-  ) => void;
+  onImagesChange: (images: CloudinaryImage[]) => void;
   error?: string;
-  defaultImages?: DefaultImage[];
-}
-
-interface PreviewItem {
-  id?: number; // DB ID if existing
-  url: string;
-  publicId?: string; // Cloudinary publicId
-  isNew: boolean;
+  defaultImages?: CloudinaryImage[];
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
-  onUploadsChange,
+  onImagesChange,
   error,
   defaultImages = [],
 }) => {
-  const [images, setImages] = useState<PreviewItem[]>([]);
+  const [images, setImages] = useState<CloudinaryImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
   // Initialize with default images
   useEffect(() => {
     if (defaultImages.length > 0) {
-      const initialized = defaultImages.map((img) => ({
-        id: img.id,
-        url: img.foto,
-        publicId: img.publicId,
-        isNew: false,
-      }));
-      setImages(initialized);
+      setImages(defaultImages);
     }
   }, [defaultImages]);
-
-  // Propagate state changes to parent whenever images list changes
-  const propagateChanges = (currentImages: PreviewItem[]) => {
-    const newUploads = currentImages
-      .filter((img) => img.isNew && img.publicId)
-      .map((img) => ({ url: img.url, publicId: img.publicId as string }));
-
-    const remainingDbIds = currentImages
-      .filter((img) => !img.isNew && img.id)
-      .map((img) => img.id as number);
-
-    onUploadsChange(newUploads, remainingDbIds);
-  };
 
   const handleOpenWidget = () => {
     if (typeof window === "undefined" || !window.cloudinary) {
@@ -93,10 +65,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         uploadSignature: async (callback: any, paramsToSign: any) => {
           try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+            const token = Cookies.get("access_token");
             const response = await axios.get(`${apiUrl}/cloudinary/signature`, {
               params: paramsToSign,
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
             });
-            // The signature is expected to be returned in response.data.signature
             callback(response.data.signature);
           } catch (err: any) {
             console.error("Failed to generate signature:", err);
@@ -126,9 +101,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             setImages((prev) => {
               const updated = [
                 ...prev,
-                { url: secure_url, publicId: public_id, isNew: true },
+                { url: secure_url, publicId: public_id },
               ];
-              propagateChanges(updated);
+              onImagesChange(updated);
               return updated;
             });
           } else if (result.event === "queues-end" || result.event === "close") {
@@ -165,7 +140,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
       setImages((prev) => {
         const updated = prev.filter((_, i) => i !== index);
-        propagateChanges(updated);
+        onImagesChange(updated);
         return updated;
       });
 

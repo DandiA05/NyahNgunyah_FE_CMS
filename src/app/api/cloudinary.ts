@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 /**
  * Deletes an asset from Cloudinary via the backend API.
@@ -6,10 +7,14 @@ import axios from "axios";
  */
 export const deleteCloudinaryAsset = async (publicId: string): Promise<void> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const token = Cookies.get("access_token");
 
   try {
     const response = await axios.delete(`${apiUrl}/cloudinary/assets`, {
       data: { publicId }, // Send publicId in the request body
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
     });
 
     if (response.status !== 200 && response.status !== 204) {

@@ -46,7 +46,7 @@ const AddProdukElements = () => {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const [uploadedImages, setUploadedImages] = useState<{ url: string; publicId: string }[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<any[]>([]);
 
   useEffect(() => {
     flatpickr(".form-datepicker", {
@@ -80,12 +80,20 @@ const AddProdukElements = () => {
           return;
         }
 
+        const mainImage = uploadedImages[0];
+        const extraImages = uploadedImages.slice(1).map((img) => ({
+          foto: img.url,
+          public_id: img.publicId || "",
+        }));
+
         await addProduk({
           nama: String(data.namaProduk),
           stock: Number(data.stock),
-          harga: data.harga,
+          harga: Number(data.harga),
           desc: getValues().descProduk,
-          fotos: uploadedImages,
+          foto: mainImage.url,
+          foto_public_id: mainImage.publicId || "",
+          fotos: extraImages,
         });
 
         Swal.fire({
@@ -194,8 +202,8 @@ const AddProdukElements = () => {
                     Gambar Produk
                   </label>
                   <ImageUploader
-                    onUploadsChange={(newUploads) => {
-                      setUploadedImages(newUploads);
+                    onImagesChange={(images) => {
+                      setUploadedImages(images);
                     }}
                     error={errors.foto?.message}
                   />
