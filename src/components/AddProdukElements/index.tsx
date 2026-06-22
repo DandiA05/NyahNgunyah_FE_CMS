@@ -46,9 +46,7 @@ const AddProdukElements = () => {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-
-
+  const [uploadedImages, setUploadedImages] = useState<{ url: string; publicId: string }[]>([]);
 
   useEffect(() => {
     flatpickr(".form-datepicker", {
@@ -71,8 +69,7 @@ const AddProdukElements = () => {
 
     if (confirmation.isConfirmed) {
       try {
-        // Manually check if the file is valid
-        if (selectedFiles.length === 0) {
+        if (uploadedImages.length === 0) {
           Swal.fire({
             title: "Error",
             text: "Foto produk wajib diupload.",
@@ -88,7 +85,7 @@ const AddProdukElements = () => {
           stock: Number(data.stock),
           harga: data.harga,
           desc: getValues().descProduk,
-          fotos: selectedFiles, // Ensure the correct file is passed here
+          fotos: uploadedImages,
         });
 
         Swal.fire({
@@ -98,7 +95,7 @@ const AddProdukElements = () => {
           confirmButtonText: "OK",
         }).then(() => {
           reset();
-          setSelectedFiles([]);
+          setUploadedImages([]);
           router.push("/produk");
         });
       } catch (err: any) {
@@ -197,20 +194,8 @@ const AddProdukElements = () => {
                     Gambar Produk
                   </label>
                   <ImageUploader
-                    onFileSelect={(files) => {
-                      setSelectedFiles((prev) => {
-                        const combined = [...prev];
-                        files.forEach((file) => {
-                          const isDuplicate = prev.some(
-                            (f) => f.name === file.name && f.size === file.size,
-                          );
-                          if (!isDuplicate) {
-                            combined.push(file);
-                          }
-                        });
-                        console.log("files", combined);
-                        return combined;
-                      });
+                    onUploadsChange={(newUploads) => {
+                      setUploadedImages(newUploads);
                     }}
                     error={errors.foto?.message}
                   />

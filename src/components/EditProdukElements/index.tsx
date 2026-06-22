@@ -45,8 +45,8 @@ const EditProdukElements = () => {
   const { id } = useParams();
   const [dataProduk, setDataProduk] = useState<any>(null);
 
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [existingFiles, setExistingFiles] = useState<any[]>([]);
+  const [newUploads, setNewUploads] = useState<{ url: string; publicId: string }[]>([]);
+  const [existingFiles, setExistingFiles] = useState<number[]>([]);
 
   useEffect(() => {
     flatpickr(".form-datepicker", {
@@ -61,10 +61,10 @@ const EditProdukElements = () => {
       setValue("foto", dataProduk.foto);
       setValue("stock", Number(dataProduk.stock));
       setValue("descProduk", dataProduk.desc);
-      setSelectedFiles(dataProduk.fotos);
       setExistingFiles(
-        dataProduk.fotos.length > 0 &&
-          dataProduk.fotos.map((file: any) => file.id),
+        dataProduk.fotos && dataProduk.fotos.length > 0
+          ? dataProduk.fotos.map((file: any) => file.id)
+          : [],
       );
     }
   }, [dataProduk, setValue]);
@@ -90,7 +90,7 @@ const EditProdukElements = () => {
           nama: String(data.namaProduk),
           stock: Number(data.stock),
           harga: String(data.harga),
-          fotos: selectedFiles ?? null, // Ensure the correct file is passed here
+          fotos: newUploads, // Send array of new Cloudinary image objects
           desc: getValues().descProduk,
           existingFileIds: existingFiles,
         });
@@ -104,7 +104,8 @@ const EditProdukElements = () => {
           confirmButtonText: "OK",
         }).then(() => {
           reset();
-          setSelectedFiles([]);
+          setNewUploads([]);
+          setExistingFiles([]);
           router.push("/produk");
         });
       } catch (err: any) {
@@ -223,29 +224,9 @@ const EditProdukElements = () => {
                   </label>
                   <ImageUploader
                     defaultImages={dataProduk?.fotos}
-                    onFileSelect={(files, deletedIds) => {
-                      //existingFiles (7) [13, 14, 15, 16, 17, 18, 19]
-                      console.log("deletedIds", deletedIds); // [1,2]
-                      setExistingFiles((prev) => {
-                        if (!deletedIds || deletedIds.length === 0) return prev;
-                        return prev.filter((id) => !deletedIds.includes(id));
-                      });
-
-                      console.log("files", files);
-
-                      setSelectedFiles((prev) => {
-                        const combined = [...prev];
-                        files.forEach((file) => {
-                          const isDuplicate = prev.some(
-                            (f) => f.name === file.name && f.size === file.size,
-                          );
-                          if (!isDuplicate) {
-                            combined.push(file);
-                          }
-                        });
-                        console.log("files", combined);
-                        return combined;
-                      });
+                    onUploadsChange={(newUploads, remainingDbIds) => {
+                      setNewUploads(newUploads);
+                      setExistingFiles(remainingDbIds);
                     }}
                   />
                   {errors.foto && (

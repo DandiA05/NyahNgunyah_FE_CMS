@@ -304,7 +304,29 @@ const DetailTransaksiElements = () => {
                   key={key}
                   className="grid grid-cols-5 border-t border-gray-200 px-6 py-3 text-gray-800 dark:border-gray-700 dark:text-gray-100"
                 >
-                  <div className="col-span-2">{produk.produk.nama}</div>
+                  <div className="col-span-2 flex items-center gap-3">
+                    {produk.produk.foto ? (
+                      <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-stroke dark:border-strokedark">
+                        <Image
+                          src={
+                            produk.produk.foto.startsWith("http")
+                              ? produk.produk.foto
+                              : `http://${produk.produk.foto}`
+                          }
+                          alt={produk.produk.nama}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-dashed border-gray-300 bg-gray-50 text-xs text-gray-400 dark:border-strokedark dark:bg-gray-800">
+                        No image
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-black dark:text-white">
+                      {produk.produk.nama}
+                    </span>
+                  </div>
                   <div className="col-span-1 text-center">
                     {formatHarga(Number(produk.produk.harga))}
                   </div>

@@ -47,31 +47,17 @@ export const addProduk = async (produkData: {
   stock: number;
   harga: number;
   desc: string;
-  fotos: File[] | null;
+  fotos: { url: string; publicId: string }[] | null;
 }): Promise<any> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // Membuat objek FormData
-  const formData: any = new FormData();
-
-  // Menambahkan data ke FormData
-  formData.append("nama", produkData.nama);
-  formData.append("harga", produkData.harga.toString()); // Harga harus string
-  formData.append("stock", produkData.stock);
-  formData.append("desc", produkData.desc);
-  
-
-  if (produkData.fotos) {
-    for (let i = 0; i < produkData.fotos.length; i++) {
-      formData.append("fotos", produkData.fotos[i]);
-    }
-  }
-
   try {
-    const response = await axios.post(`${apiUrl}/produk`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", // Mengatur header agar axios tahu ini adalah form data
-      },
+    const response = await axios.post(`${apiUrl}/produk`, {
+      nama: produkData.nama,
+      harga: produkData.harga.toString(),
+      stock: produkData.stock,
+      desc: produkData.desc,
+      fotos: produkData.fotos,
     });
 
     if (response.status !== 201) {
@@ -91,36 +77,20 @@ export const editProduk = async (
     stock: number;
     harga: string;
     desc: string;
-    fotos?: File[] | null; // Use File type for foto
+    fotos?: { url: string; publicId: string }[] | null;
     existingFileIds: number[];
   },
 ): Promise<any> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // Create a new FormData object
-  const formData: any = new FormData();
-
-  // Append form fields to FormData
-  formData.append("nama", produkData.nama);
-  formData.append("harga", produkData.harga);
-  formData.append("stock", produkData.stock);
-  formData.append("desc", produkData.desc);
-  formData.append("existingFileIds", JSON.stringify(produkData.existingFileIds));
-
-  // Append the foto field, handle both File and string case
-  if (produkData.fotos) {
-    for (let i = 0; i < produkData.fotos.length; i++) {
-      if(produkData.fotos[i] instanceof File){
-      formData.append("fotos", produkData.fotos[i]);
-      }
-    }
-  }
-
   try {
-    const response = await axios.put(`${apiUrl}/produk/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", // Specify that the request contains a file
-      },
+    const response = await axios.put(`${apiUrl}/produk/${id}`, {
+      nama: produkData.nama,
+      harga: produkData.harga,
+      stock: produkData.stock,
+      desc: produkData.desc,
+      existingFileIds: produkData.existingFileIds,
+      fotos: produkData.fotos ?? null,
     });
 
     if (response.status !== 200) {
