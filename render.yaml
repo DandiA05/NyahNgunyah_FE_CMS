@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: nyahngunyah-fe-cms
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        value: https://nyahngunyah-fe-cms.onrender.com # Update this with your actual URL
+      - key: NODE_VERSION
+        value: 20.x

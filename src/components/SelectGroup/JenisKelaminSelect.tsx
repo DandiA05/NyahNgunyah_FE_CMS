@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 interface SelectGroupTwoProps {
-  selectedOption: string;
-  onChange: (value: string) => void;
+  selectedOption?: string;
+  onChange?: (value: string) => void;
 }
 
 const SelectGroupTwo: React.FC<SelectGroupTwoProps> = ({
-  selectedOption,
-  onChange,
+  selectedOption = "",
+  onChange = () => {},
 }) => {
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 

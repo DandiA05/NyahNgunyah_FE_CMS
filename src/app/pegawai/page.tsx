@@ -1,4 +1,3 @@
-"use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import TablePegawai from "@/components/Tables/TablePegawai";
 import { Metadata } from "next";
