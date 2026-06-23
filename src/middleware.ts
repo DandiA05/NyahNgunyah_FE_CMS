@@ -8,18 +8,23 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/produk', req.url));
   }
 
-  const token = req.cookies.get('token')?.value;
+  // Cek token dari cookie 'access_token' (utama) atau 'token' (fallback)
+  const token = req.cookies.get('access_token')?.value || req.cookies.get('token')?.value;
   const isLogin = !!token;
 
-
-
   if (!isLogin) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/pegawai/:path*', '/cuti/:path*'],
+  matcher: [
+    '/',
+    '/data-admin/:path*',
+    '/produk/:path*',
+    '/transaksi/:path*'
+  ],
 };
+

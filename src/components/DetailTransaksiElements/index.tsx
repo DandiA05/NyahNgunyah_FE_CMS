@@ -141,6 +141,40 @@ const DetailTransaksiElements = () => {
     }
   };
 
+  const handleDownload = (url: string) => {
+    if (!url) return;
+    
+    // Jika URL berasal dari Cloudinary, tambahkan flag fl_attachment untuk memicu download langsung
+    if (url.includes("cloudinary.com") && url.includes("/upload/")) {
+      const downloadUrl = url.replace("/upload/", "/upload/fl_attachment/");
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // Fallback untuk URL non-Cloudinary
+      fetch(url)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          const filename = url.split("/").pop() || "bukti-transfer.jpg";
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(blobUrl);
+        })
+        .catch((err) => {
+          console.error("Gagal mendownload gambar via fetch blob, fallback ke window.open:", err);
+          window.open(url, "_blank");
+        });
+    }
+  };
+
+
   return (
     <>
       <Breadcrumb
@@ -258,13 +292,13 @@ const DetailTransaksiElements = () => {
                           Lihat Gambar
                         </button>
 
-                        <Link
-                          href={dataTransaksi.bukti_transfer}
-                          target="_blank"
+                        <button
+                          type="button"
+                          onClick={() => handleDownload(dataTransaksi.bukti_transfer)}
                           className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         >
                           Download
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -361,22 +395,25 @@ const DetailTransaksiElements = () => {
       {/* Modal Preview */}
       {isPreviewOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm cursor-zoom-out"
           onClick={() => setIsPreviewOpen(false)}
         >
-          <div className="relative max-h-[90vh] max-w-3xl">
-            <Image
+          <div 
+            className="relative cursor-default" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={dataTransaksi.bukti_transfer}
               alt="Preview Bukti Transfer"
-              width={900}
-              height={900}
-              className="rounded-lg object-contain"
+              className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain shadow-2xl"
             />
             <button
-              className="absolute right-3 top-3 rounded-md bg-white/80 px-3 py-1 text-sm font-semibold text-gray-800 hover:bg-white"
+              className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black transition shadow"
               onClick={() => setIsPreviewOpen(false)}
+              title="Tutup"
             >
-              ✕ Tutup
+              ✕
             </button>
           </div>
         </div>
