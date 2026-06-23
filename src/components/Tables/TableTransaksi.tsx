@@ -60,8 +60,6 @@ const TableTransaksi = () => {
     getTransaksiData();
   };
 
-  if (loading) return <p>Loading...</p>;
-
   return (
     <>
       {/* 🔍 Filter Section */}
@@ -206,8 +204,15 @@ const TableTransaksi = () => {
         </div>
 
         {/* Body */}
-        {transaksiList.length === 0 ? (
-          <div className="py-4 text-center text-sm text-black dark:text-white">
+        {loading ? (
+          <div className="flex h-96 items-center justify-center border-t border-stroke dark:border-strokedark">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Loading data...</p>
+            </div>
+          </div>
+        ) : transaksiList.length === 0 ? (
+          <div className="py-4 text-center text-sm text-black dark:text-white border-t border-stroke dark:border-strokedark">
             Data transaksi tidak ada
           </div>
         ) : (
