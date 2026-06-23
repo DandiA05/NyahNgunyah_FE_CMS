@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { deletePegawai, fetchPegawai, Pegawai } from "../../app/api/pegawai";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import { AdminType, deleteAdmin, fetchAdmin } from "@/app/api/admin";

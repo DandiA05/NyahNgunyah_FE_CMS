@@ -7,12 +7,6 @@ import Link from "next/link";
 import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  editPegawai,
-  addPegawai,
-  Pegawai,
-  fetchPegawaiById,
-} from "@/app/api/pegawai";
 import { useParams, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 

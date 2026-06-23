@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Pegawai } from "./pegawai";
 
 export type Produk = {
   id: number;

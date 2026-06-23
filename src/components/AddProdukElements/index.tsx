@@ -4,9 +4,6 @@ import Link from "next/link";
 import * as z from "zod";
 
 import { useEffect, useState } from "react";
-import { fetchPegawai, Pegawai } from "@/app/api/pegawai";
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -47,12 +44,6 @@ const AddProdukElements = () => {
   const router = useRouter();
 
   const [uploadedImages, setUploadedImages] = useState<any[]>([]);
-
-  useEffect(() => {
-    flatpickr(".form-datepicker", {
-      dateFormat: "m/d/Y",
-    });
-  }, []);
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
